@@ -15,12 +15,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AcmeWeatherRecommendationJava {
 
     public static void main(String[] args) throws IOException {
+        //Parameters for API call to OpenWeatherMap
         String city = "minneapolis";
         String units = "imperial";
         String APIkey = "09110e603c1d5c272f94f64305c09436";
         String currentWeather = "";
         ObjectMapper mapper = new ObjectMapper();
 
+        //Gets current date and forecast time
         String dateFormat = "yyyy-MM-dd";
         String hourFormat = "HH";
         SimpleDateFormat dfObj = new SimpleDateFormat(dateFormat);
@@ -29,7 +31,6 @@ public class AcmeWeatherRecommendationJava {
         String currentHour = hObj.format(new Date());
         String adjustedHour = adjustHour(currentHour);
         String[] days = new String[5];
-
 
         for(int i=0; i<5; i++) {
             days[i] = LocalDate.parse(currentDay).plusDays(i).toString();
@@ -53,7 +54,7 @@ public class AcmeWeatherRecommendationJava {
         } catch (Exception e) {
             System.out.println("Failed to retrieve weather information.");
         }
-
+        //Logic to read through JSON for forecast and data and return appropriate recommendations
         Response response = mapper.readValue(currentWeather, Response.class);
         response.getList().forEach(e -> {
             for(String day : days) {
@@ -76,6 +77,7 @@ public class AcmeWeatherRecommendationJava {
         });
         http.disconnect();
     }
+    //Private method to format recommendation strings
     private static String formatOutput(double temperature, String weather, String icon, String day, String hour, int method) {
         StringBuilder output = new StringBuilder();
         String intro = "Today is ";
@@ -101,13 +103,15 @@ public class AcmeWeatherRecommendationJava {
         }
         return output.toString();
     }
+    //Private method to return next closest forecasted hour to ensure that a recommendation is generated for all 5 days.
+    //Forecasted hours are 0:00, 3:00, 6:00, 9:00, 12:00, 15:00, 18:00, 21:00
     private static String adjustHour(String currentHour) {
         int roundedHour = (int)(3*(Math.round(Double.parseDouble(currentHour)/3)) + 6);
 
         return String.valueOf(roundedHour);
     }
 }
-
+//POJO classes for JSON returned by OpenWeatherMap
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Response {
     private List<Forecast> list;
