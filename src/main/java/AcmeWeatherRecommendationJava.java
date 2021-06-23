@@ -17,7 +17,7 @@ public class AcmeWeatherRecommendationJava {
     public static void main(String[] args) throws IOException {
         String city = "minneapolis";
         String units = "imperial";
-        String APIkey = "d8866b711755d2827761e88d2bc557a7";
+        String APIkey = "09110e603c1d5c272f94f64305c09436";
         String currentWeather = "";
         ObjectMapper mapper = new ObjectMapper();
 
